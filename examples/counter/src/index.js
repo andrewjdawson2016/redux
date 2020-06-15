@@ -1,20 +1,35 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import { createStore } from 'redux'
+import { configureStore, createSlice } from '@reduxjs/toolkit'
 import Counter from './components/Counter'
-import counter from './reducers'
 
-const store = createStore(counter)
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState: 0,
+  reducers: {
+    increment: state => state + 1,
+    decrement: state => state - 1
+  }
+})
+
+const { increment, decrement } = counterSlice.actions;
+
+const store = configureStore({
+  reducer: counterSlice.reducer
+})
 const rootEl = document.getElementById('root')
 
-const render = () => ReactDOM.render(
-  <Counter
-    value={store.getState()}
-    onIncrement={() => store.dispatch({ type: 'INCREMENT' })}
-    onDecrement={() => store.dispatch({ type: 'DECREMENT' })}
-  />,
-  rootEl
-)
+const render = () => {
+  console.log('calling render')
+  ReactDOM.render(
+    <Counter
+      value={store.getState()}
+      onIncrement={() => store.dispatch(increment())}
+      onDecrement={() => store.dispatch(decrement())}
+    />,
+    rootEl
+  )
+}
 
 render()
 store.subscribe(render)
